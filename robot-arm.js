@@ -3,7 +3,7 @@
  * 
  * @param {HTMLCanvasElement} canvas The canvas element used for drawing the robot arm on.
  */
-var RobotArm = function (canvas) {
+var RobotArm = function(canvas) {
     // So we can reference this when we are inside other functions
     var self = this;
     // This wont be visible to the consumers of the RobotArm instance
@@ -16,7 +16,7 @@ var RobotArm = function (canvas) {
     // The amount of rows to use
     self.rows = 8;
     // The speed of which the animations go
-    self.speed = 50;
+    self.speed = 200;
 
     // List of animations
     local.animationList = [];
@@ -45,7 +45,7 @@ var RobotArm = function (canvas) {
     local.blocks.availableColors = ["red", "blue", "green", "white"];
     local.blocks.map = null;
     local.blocks.held = null;
-    
+
     // State variables
     local.state = {};
     // Arm
@@ -61,27 +61,27 @@ var RobotArm = function (canvas) {
     // The background color of the robot arm canvas
     local.settings.backgroundColor = "#EEE";
 
-    local.getAvailableTotalRowsHeight = function () {
-		return ctx.canvas.height - local.arm.height - local.arm.hookHeight;
-	};
+    local.getAvailableTotalRowsHeight = function() {
+        return ctx.canvas.height - local.arm.height - local.arm.hookHeight;
+    };
 
-    local.copyMap = function (map) {
+    local.copyMap = function(map) {
         var newMap = [];
-		for (var i = 0; i < map.length; i++) newMap.push(map[i].slice());
-		return newMap;
+        for (var i = 0; i < map.length; i++) newMap.push(map[i].slice());
+        return newMap;
     };
 
     var runTime;
     /**
      * Renders all of the robot arm
      */
-    local.render = function () {
+    local.render = function() {
         var now = new Date().getTime();
-		var dt = now - (runTime || now);
+        var dt = now - (runTime || now);
         // Clear surface to start a new frame
         ctx.beginPath();
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        
+
         // Draw the background
         ctx.fillStyle = local.settings.backgroundColor;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -105,105 +105,105 @@ var RobotArm = function (canvas) {
         requestAnimationFrame(local.render);
     };
 
-    local.renderFloor = function () {
+    local.renderFloor = function() {
         // Save state and restore after rendering
         ctx.save();
         // Set line color to black
-		ctx.strokeStyle = "#000";
-		// Draw line beneath
-		ctx.moveTo(0, ctx.canvas.height);
-		ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
-		// Draw column separators
-		var columnWidth = ctx.canvas.width / self.columns;
-		for (var i = 0; i < self.columns + 1; i++) {
-			ctx.moveTo(i * columnWidth, ctx.canvas.height);
-			ctx.lineTo(i * columnWidth, ctx.canvas.height - local.floor.columnSeparatorHeight);
-		}
+        ctx.strokeStyle = "#000";
+        // Draw line beneath
+        ctx.moveTo(0, ctx.canvas.height);
+        ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+        // Draw column separators
+        var columnWidth = ctx.canvas.width / self.columns;
+        for (var i = 0; i < self.columns + 1; i++) {
+            ctx.moveTo(i * columnWidth, ctx.canvas.height);
+            ctx.lineTo(i * columnWidth, ctx.canvas.height - local.floor.columnSeparatorHeight);
+        }
         // Restore after rendering arm
         ctx.restore();
     };
 
-    local.renderArm = function () {
+    local.renderArm = function() {
         // Save state and restore after rendering
         ctx.save();
         // Set drawing color to black
         ctx.strokeStyle = "#000";
 
         var columnWidth = ctx.canvas.width / self.columns;
-		var columnXPosForCurrentColumn = local.arm.position * columnWidth;
-		var blockWidth = (ctx.canvas.width / self.columns) - local.floor.columnSeparatorPadding * 2;
+        var columnXPosForCurrentColumn = local.arm.position * columnWidth;
+        var blockWidth = (ctx.canvas.width / self.columns) - local.floor.columnSeparatorPadding * 2;
 
-		ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth / 2, 0);
-		ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth / 2, local.arm.height + local.arm.verticalOffset);
+        ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth / 2, 0);
+        ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth / 2, local.arm.height + local.arm.verticalOffset);
 
-		ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
-		ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
+        ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
+        ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
 
-		ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
-		ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.hookHeight + local.arm.verticalOffset);
+        ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
+        ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding, local.arm.height + local.arm.hookHeight + local.arm.verticalOffset);
 
-		ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
-		ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.hookHeight + local.arm.verticalOffset);
+        ctx.moveTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.verticalOffset);
+        ctx.lineTo(local.arm.horizontalOffset + columnXPosForCurrentColumn + columnWidth - local.floor.columnSeparatorPadding, local.arm.height + local.arm.hookHeight + local.arm.verticalOffset);
 
         if (local.blocks.held != null) {
-				var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
-				// Drawing the inner color of the rectangle
-				ctx.fillStyle = local.blocks.held;
-				ctx.fillRect(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
-					local.arm.height + local.arm.verticalOffset + 1,
-					blockWidth - 3,
-					blockHeight - 2);
+            var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
+            // Drawing the inner color of the rectangle
+            ctx.fillStyle = local.blocks.held;
+            ctx.fillRect(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
+                local.arm.height + local.arm.verticalOffset + 1,
+                blockWidth - 3,
+                blockHeight - 2);
 
-				// Set the stroke color to black
-				ctx.strokeStyle = "#000";
-				// Drawing the outer rectangle
-				ctx.rect(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
-					local.arm.height + local.arm.verticalOffset + 1,
-					blockWidth - 2,
-					blockHeight - 1);
-		}
+            // Set the stroke color to black
+            ctx.strokeStyle = "#000";
+            // Drawing the outer rectangle
+            ctx.rect(local.arm.horizontalOffset + columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
+                local.arm.height + local.arm.verticalOffset + 1,
+                blockWidth - 2,
+                blockHeight - 1);
+        }
 
         // Restore after rendering arm
         ctx.restore();
     };
 
-    local.renderBlocks = function () {
+    local.renderBlocks = function() {
         // Save state and restore after rendering
         ctx.save();
         // Calculate some values to know where to draw and how large
-		var columnWidth = ctx.canvas.width / self.columns;
-		var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
-		var blockWidth = (ctx.canvas.width / self.columns) - local.floor.columnSeparatorPadding * 2;
+        var columnWidth = ctx.canvas.width / self.columns;
+        var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
+        var blockWidth = (ctx.canvas.width / self.columns) - local.floor.columnSeparatorPadding * 2;
 
-		// For every block do
-		for (var column = 0; column < local.blocks.map.length; column++) {
-			var col = local.blocks.map[column];
-			if (!col) continue;
-			for (var row = 0; row < col.length; row++) {
-				//console.log("Column: " + column + " Row: " + row + " has color " + local.blocks.map[column][row]);
-				// Base position of the column we are working with (used for calculating the padding)
-				var columnXPosForCurrentColumn = column * columnWidth;
-				// Drawing the inner color of the rectangle
-				ctx.fillStyle = local.blocks.map[column][row];
-				ctx.fillRect(columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
-					ctx.canvas.height - blockHeight * (row + 1) - 1,
-					blockWidth,
-					blockHeight - 1);
+        // For every block do
+        for (var column = 0; column < local.blocks.map.length; column++) {
+            var col = local.blocks.map[column];
+            if (!col) continue;
+            for (var row = 0; row < col.length; row++) {
+                //console.log("Column: " + column + " Row: " + row + " has color " + local.blocks.map[column][row]);
+                // Base position of the column we are working with (used for calculating the padding)
+                var columnXPosForCurrentColumn = column * columnWidth;
+                // Drawing the inner color of the rectangle
+                ctx.fillStyle = local.blocks.map[column][row];
+                ctx.fillRect(columnXPosForCurrentColumn + local.floor.columnSeparatorPadding + 1,
+                    ctx.canvas.height - blockHeight * (row + 1) - 1,
+                    blockWidth,
+                    blockHeight - 1);
 
-				// Set the stroke color to black
-				ctx.strokeStyle = "#000";
-				// Drawing the outer rectangle
-				ctx.rect(columnXPosForCurrentColumn + local.floor.columnSeparatorPadding,
-					ctx.canvas.height - blockHeight * (row + 1) - 1,
-					blockWidth,
-					blockHeight);
-			}
-		}
+                // Set the stroke color to black
+                ctx.strokeStyle = "#000";
+                // Drawing the outer rectangle
+                ctx.rect(columnXPosForCurrentColumn + local.floor.columnSeparatorPadding,
+                    ctx.canvas.height - blockHeight * (row + 1) - 1,
+                    blockWidth,
+                    blockHeight);
+            }
+        }
         // Restore after rendering arm
         ctx.restore();
     };
 
-    local.moveRightAnimation = function (dt) {
+    local.moveRightAnimation = function(dt) {
         local.arm.horizontalOffset += (self.speed * ctx.canvas.width) / 1000 / dt;
 
         if (local.arm.horizontalOffset <= ctx.canvas.width / self.columns) {
@@ -215,7 +215,7 @@ var RobotArm = function (canvas) {
         return true;
     };
 
-    local.moveLeftAnimation = function (dt) {
+    local.moveLeftAnimation = function(dt) {
         local.arm.horizontalOffset -= (self.speed * ctx.canvas.width) / 1000 / dt;
 
         if (local.arm.horizontalOffset * -1 <= ctx.canvas.width / self.columns) {
@@ -227,7 +227,7 @@ var RobotArm = function (canvas) {
         return true;
     };
 
-    local.grabAnimation = function (dt) {
+    local.grabAnimation = function(dt) {
         if (!this.isMovingUp) {
             if (local.moveArmDownAnimation(dt)) {
                 this.isMovingUp = true;
@@ -246,7 +246,7 @@ var RobotArm = function (canvas) {
         }
     };
 
-    local.dropAnimation = function (dt) {
+    local.dropAnimation = function(dt) {
         if (!this.isMovingUp) {
             if (local.moveArmDownAnimation(dt)) {
                 this.isMovingUp = true;
@@ -264,16 +264,16 @@ var RobotArm = function (canvas) {
         }
     }
 
-    local.moveArmDownAnimation = function (dt) {
+    local.moveArmDownAnimation = function(dt) {
         local.arm.verticalOffset += (self.speed * 2 * ctx.canvas.height) / 1000 / dt;
 
         var rowsForCurrentColumn = (local.blocks.map[local.arm.position] != undefined ? local.blocks.map[local.arm.position] : []).length;
-		var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
+        var blockHeight = local.getAvailableTotalRowsHeight() / self.rows;
 
         if (local.blocks.held != null) rowsForCurrentColumn++;
 
         var blocksTotalHeight = rowsForCurrentColumn * blockHeight;
-		var distanceToTravel = ctx.canvas.height - blocksTotalHeight - local.arm.height - 3;
+        var distanceToTravel = ctx.canvas.height - blocksTotalHeight - local.arm.height - 3;
 
         if (distanceToTravel >= local.arm.verticalOffset) {
             return false;
@@ -282,7 +282,7 @@ var RobotArm = function (canvas) {
         return true;
     };
 
-    local.moveArmUpAnimation = function (dt) {
+    local.moveArmUpAnimation = function(dt) {
         local.arm.verticalOffset -= (self.speed * 2 * ctx.canvas.height) / 1000 / dt;
 
         if (0 <= local.arm.verticalOffset) {
@@ -298,7 +298,7 @@ var RobotArm = function (canvas) {
      * 
      * @returns
      */
-    self.moveRight = function () {
+    self.moveRight = function() {
         // Don't do anything if we would move out of the columns
         if (local.arm.position + 1 > self.columns) return;
         local.animationList.push(local.moveRightAnimation);
@@ -307,7 +307,7 @@ var RobotArm = function (canvas) {
     /**
      * Moves the robot arm one position to the left if possible
      */
-    self.moveLeft = function () {
+    self.moveLeft = function() {
         if (local.state.arm.position - 1 < 0) return;
         local.animationList.push(local.moveLeftAnimation);
         local.state.arm.position--;
@@ -316,13 +316,13 @@ var RobotArm = function (canvas) {
      * Returns the color of the held block, if any
      * @returns {null|string} The name of the color of the block that is being held 
      */
-    self.scan = function () {
+    self.scan = function() {
         return local.state.blocks.held || null;
     };
     /**
      * Grabs a block from beneath, if possible
      */
-    self.grab = function () {
+    self.grab = function() {
 
         if (local.state.blocks.held == null) {
             local.animationList.push(local.grabAnimation);
@@ -337,7 +337,7 @@ var RobotArm = function (canvas) {
     /**
      * Drops a block beneath, if possible
      */
-    self.drop = function () {
+    self.drop = function() {
         local.animationList.push(local.dropAnimation);
         if (local.state.blocks.held != null) {
             if (!local.state.blocks.map[local.state.arm.position]) local.state.blocks.map[local.state.arm.position] = [];
@@ -346,7 +346,7 @@ var RobotArm = function (canvas) {
         }
     };
 
-    self.setMap = function (map) {
+    self.setMap = function(map) {
         local.blocks.map = map.slice();
         local.state.blocks.map = local.copyMap(map);
     };
@@ -354,22 +354,50 @@ var RobotArm = function (canvas) {
     self.loadLevel = function(levelName) {
         switch (levelName) {
             case "exercise 1":
-                self.setMap([[], ["red"]]);
+                self.setMap([
+                    [],
+                    ["red"]
+                ]);
                 break;
             case "exercise 2":
-                self.setMap([["blue"], [] ,[], [], ["blue"], [], [], ["blue"]]);
+                self.setMap([
+                    ["blue"],
+                    [],
+                    [],
+                    [],
+                    ["blue"],
+                    [],
+                    [],
+                    ["blue"]
+                ]);
                 break;
             case "exercise 3":
-                self.setMap([["white", "white", "white", "white"]]);
+                self.setMap([
+                    ["white", "white", "white", "white"]
+                ]);
                 break;
             case "exercise 4":
-                self.setMap([["blue", "white", "green"]]);
+                self.setMap([
+                    ["blue", "white", "green"]
+                ]);
                 break;
             case "exercise 5":
-                self.setMap([[], ["red", "red", "red", "red", "red", "red", "red"]]);
+                self.setMap([
+                    [],
+                    ["red", "red", "red", "red", "red", "red", "red"]
+                ]);
                 break;
             case "exercise 6":
-                self.setMap([["red"], ["blue"], ["white"], ["green"], ["green"], ["blue"], ["red"], ["white"]]);
+                self.setMap([
+                    ["red"],
+                    ["blue"],
+                    ["white"],
+                    ["green"],
+                    ["green"],
+                    ["blue"],
+                    ["red"],
+                    ["white"]
+                ]);
                 break;
             case "exercise 7":
                 self.setMap([
@@ -479,20 +507,20 @@ var RobotArm = function (canvas) {
         }
     };
 
-    self.randomLevel = function (columns) {
-		columns = columns || 5;
-		rows = 6;
+    self.randomLevel = function(columns) {
+        columns = columns || 5;
+        rows = 6;
 
-		var map = [];
-		for (var c = 0; c < columns; c++) {
-			map[c] = [];
-			var rh = Math.floor(Math.random() * rows + 1);
-			for (var r = 0; r < rh; r++) {
-				map[c][r] = local.blocks.availableColors[Math.floor(Math.random() * local.blocks.availableColors.length)];
-			}
-		}
-		self.setMap(map);
-	};
+        var map = [];
+        for (var c = 0; c < columns; c++) {
+            map[c] = [];
+            var rh = Math.floor(Math.random() * rows + 1);
+            for (var r = 0; r < rh; r++) {
+                map[c][r] = local.blocks.availableColors[Math.floor(Math.random() * local.blocks.availableColors.length)];
+            }
+        }
+        self.setMap(map);
+    };
 
     /**
      * Waits for a certain amount of time.
@@ -500,7 +528,7 @@ var RobotArm = function (canvas) {
     // self.wait = function () {
     //     local.mainMovementFunc(this);
     // };
-    self.run = function () {
+    self.run = function() {
         // Render frames
         requestAnimationFrame(local.render);
     };
